@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Product</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <script>
+        function ReturnId()
+        {
+            var user_id = new  URLSearchParams(window.location.search);
+            var id_value = user_id.get('id');
+            return id_value; 
+
+        }
+
+        function UserGetInputValue()
+        {
+            const prod_id = ReturnId();
+           
+            var url = 'http://localhost/batch-3/api/product_wise_view_controller.php?id='+prod_id;
+            fetch(url)
+            .then((res)=>{
+                return res.json();
+            }).then((data)=>{
+                document.getElementById("product_name").value = data.result[0].product_name
+                document.getElementById("product_price").value = data.result[0].product_price
+                document.getElementById("prod_title").value = data.result[0].prod_title
+                document.getElementById("prod_status").value = data.result[0].prod_status
+                document.getElementById("prod_desc").value = data.result[0].prod_desc
+                document.getElementById("id").value = prod_id
+
+            })
+        }
+        
+         
+          
+    </script>
+  </head>
+  <body>
+    <h1 class="bg-dark text-center p-2 text-white"> Update Product</h1>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <input type="text" id="product_name" placeholder="product_name"  class="form-control">
+                    <input type="text" id="product_price" placeholder="product_price"  class="form-control">
+                    <input type="text" id="prod_desc" placeholder="prod_desc" class="form-control">
+                    <input type="text" id="prod_title" placeholder="prod_title" class="form-control">
+                    <input type="text" id="prod_status" placeholder="prod_status" class="form-control">
+                    <input type="file" id="img"  class="form-control">
+                    <input type="hidden" id="id">
+                    <button class="btn btn-primary p-2" onclick="OnProductSend()">Update</button>
+                </div>
+
+               
+            </div>
+        </div>
+      
+
+      <script>
+        function OnProductSend()
+        {
+                var product_name = document.getElementById("product_name").value;
+                var product_price = document.getElementById("product_price").value;
+                var prod_desc = document.getElementById("prod_desc").value;
+                var prod_title = document.getElementById("prod_title").value;
+                var prod_status = document.getElementById("prod_status").value;
+                var img = document.getElementById("img").files[0];
+                var id = document.getElementById("id").value;
+                const formData = new FormData();
+                formData.append('product_name',product_name);
+                formData.append('product_price',product_price);
+                formData.append('prod_desc',prod_desc);
+                formData.append('prod_title',prod_title);
+                formData.append('prod_status',prod_status);
+                formData.append('img',img);
+                formData.append('id',id);
+                //console.log(formData);
+
+                var url = 'http://localhost/batch-3/api/update_controller.php';
+                fetch(url,{
+                    method:"POST",
+                    body:formData
+                }).then((res)=>{
+                    return res.json();
+                }).then((response)=>{
+                    console.log(response.msg);
+                    alert(response.msg)
+                })
+        }
+
+       UserGetInputValue()
+      </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  </body>
+</html>

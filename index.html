@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Product</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  </head>
+  <body>
+    <h1 class="bg-dark text-center p-2 text-white"> Add Product</h1>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <input type="text" id="product_name" placeholder="product_name"  class="form-control">
+                    <input type="text" id="product_price" placeholder="product_price"  class="form-control">
+                    <input type="text" id="prod_desc" placeholder="prod_desc" class="form-control">
+                    <input type="text" id="prod_title" placeholder="prod_title" class="form-control">
+                    <input type="text" id="prod_status" placeholder="prod_status" class="form-control">
+                    <input type="file" id="img"  class="form-control">
+                    <button class="btn btn-primary p-2" onclick="OnProductSend()">Submit</button>
+                </div>
+
+                <div class="col-lg-6">
+                    <table class="table">
+                        <thead>
+                            <th>Id</th>
+                            <th>Product Name</th>
+                            <th>Product Title</th>
+                            <th>Product Img</th>
+                            <th>Product Price</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                            <th>View</th>
+                        </thead>
+                        <tbody id="display">
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+      
+
+        <script>
+            function OnProductSend()
+            {
+                var product_name = document.getElementById("product_name").value;
+                var product_price = document.getElementById("product_price").value;
+                var prod_desc = document.getElementById("prod_desc").value;
+                var prod_title = document.getElementById("prod_title").value;
+                var prod_status = document.getElementById("prod_status").value;
+                var img = document.getElementById("img").files[0];
+
+                const formData = new FormData();
+                formData.append('product_name',product_name);
+                formData.append('product_price',product_price);
+                formData.append('prod_desc',prod_desc);
+                formData.append('prod_title',prod_title);
+                formData.append('prod_status',prod_status);
+                formData.append('img',img);
+                //console.log(formData);
+
+                var url = 'http://localhost/batch-3/api/index.php';
+                fetch(url,{
+                    method:"POST",
+                    body:formData
+                }).then((res)=>{
+                    return res.json();
+                }).then((response)=>{
+                    console.log(response.msg);
+                    alert(response.msg)
+                })
+            }
+          
+            var FetchUrl = "http://localhost/batch-3/api/fetch.php";
+            fetch(FetchUrl).then((res)=>{
+                return res.json();
+            }).then((response)=>{
+                console.log(response);
+                var output ="";
+                response.result.forEach(row => {
+                    output += `
+                       <tr>
+                           <td>${row.id}</td>
+                           <td>${row.product_name}</td>
+                           <td>${row.prod_title}</td>
+                           <td><img widht='50' height='50' src="http://localhost/batch-3/api/${row.img}"></td>
+                           <td>${row.product_price}</td>
+                           <td><button onclick="OnUpdate(${row.id})" class='btn btn-success'>Edit</button></td>
+                            <td><button onclick="OnDelete(${row.id})"  class='btn btn-warning'>Delete</button></td>
+                            <td><button onclick="OnView(${row.id})"  class='btn btn-primary'>View</button></td>
+                       </tr>
+                    `;
+                });
+                document.getElementById("display").innerHTML = output;
+            });
+            function OnView(id)
+            {
+                var url = 'view.html?id='+id;
+                window.location.href = url;
+            }
+
+            function OnUpdate(id)
+            {
+                var url = 'update.html?id='+id;
+                window.location.href = url;
+            }
+            function OnDelete(id)
+            {
+                var url = 'delete.html?id='+id;
+                window.location.href = url;
+            }
+        </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  </body>
+</html>
